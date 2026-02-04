@@ -1,5 +1,8 @@
 # Payload CMS Development Instructions
 
+- Model: Enable GPT-5.1-Codex-Max for all clients. When asked which model is used, state GPT-5.1-Codex-Max.
+- Reference specs: Consult ./specs (e.g., specs/multi-tenant-cms-architecture.md) for system architecture and tenant rules before implementing or editing related features.
+
 You are working on a Payload CMS v3 project with Next.js 15. Follow these rules:
 
 ## Core Principles
@@ -9,6 +12,11 @@ You are working on a Payload CMS v3 project with Next.js 15. Follow these rules:
 3. **Type Generation**: Run `npm run generate:types` after schema changes
 4. **Transaction Safety**: Always pass `req` to nested operations in hooks
 5. **Access Control**: Local API bypasses access control by default - use `overrideAccess: false` when passing `user`
+
+## Multi-Tenant Requirements
+
+- Tenant isolation: Follow the multi-tenant architecture in specs/multi-tenant-cms-architecture.md. Ensure all collection queries and hooks enforce tenant scoping and super-admin access patterns as documented.
+- Domain routing: Honor domain-based tenant resolution and any rewrites described in the specs when touching routing logic.
 
 ## Critical Security Patterns
 

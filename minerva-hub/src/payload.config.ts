@@ -1,8 +1,8 @@
 import { mongooseAdapter } from '@payloadcms/db-mongodb'
+import { multiTenantPlugin } from '@payloadcms/plugin-multi-tenant'
 import { lexicalEditor } from '@payloadcms/richtext-lexical'
 import path from 'path'
 import { buildConfig } from 'payload'
-import { multiTenantPlugin } from '@payloadcms/plugin-multi-tenant'
 import { fileURLToPath } from 'url'
 import sharp from 'sharp'
 
@@ -21,7 +21,7 @@ export default buildConfig({
       baseDir: path.resolve(dirname),
     },
   },
-  collections: [Users, Tenants, Media],
+  collections: [Users, Media, Tenants],
   editor: lexicalEditor(),
   secret: process.env.PAYLOAD_SECRET || '',
   typescript: {
@@ -33,9 +33,15 @@ export default buildConfig({
   sharp,
   plugins: [
     multiTenantPlugin<Config>({
-      tenantsSlug: Tenants.slug,
       collections: {
         media: {},
+      },
+      tenantsArrayField: {
+        includeDefaultField: false,
+      },
+      userHasAccessToAllTenants: (user) => {
+        const roles = (user as { roles?: string[] })?.roles || []
+        return roles.includes('super-admin')
       },
     }),
   ],
